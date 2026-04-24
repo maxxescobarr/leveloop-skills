@@ -439,6 +439,23 @@ curl -s --resolve "ah29ra-xt.myshopify.com:443:23.227.38.74" \
 
 > Si la orden ya tiene `financial_status: paid`, reportar al usuario y no duplicar.
 
+### Paso C3b — Agregar comprobantes como nota en Shopify
+
+Usar REST PUT para actualizar el campo `note` de la orden con las URLs de ambos
+comprobantes (apartado + liquidación). Esto deja evidencia trazable directamente
+en la orden de Shopify.
+
+```bash
+curl -s --connect-timeout 10 --resolve "ah29ra-xt.myshopify.com:443:23.227.38.74" \
+  -X PUT "https://ah29ra-xt.myshopify.com/admin/api/2025-01/orders/{ORDER_ID}.json" \
+  -H "X-Shopify-Access-Token: {TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d "{\"order\":{\"id\":{ORDER_ID},\"note\":\"{NOTA_ORIGINAL}\n\n💰 Comprobante apartado: {URL_APARTADO}\n✅ Comprobante liquidacion: {URL_LIQUIDACION}\"}}"
+```
+
+> Si la nota original ya existe, concatenar — no reemplazar.
+> Si no hay `comprobante_apartado`, omitir esa línea.
+
 ### Paso C4 — Enviar comprobante de liquidación a Slack
 
 Usar `chat.postMessage` con Block Kit — Slack jala la imagen directamente desde ManyChat.
