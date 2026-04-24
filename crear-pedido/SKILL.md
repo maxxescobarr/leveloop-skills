@@ -1,7 +1,4 @@
 ---
-
-> ⚠️ **Credenciales:** Las variables `${SHOPIFY_CLIENT_ID}`, `${SHOPIFY_CLIENT_SECRET}`, `${MANYCHAT_API_TOKEN}` y `${SLACK_BOT_TOKEN}` son secretos del equipo. No subir valores reales a este repo.
-
 name: crear-pedido-lienzos
 description: >
   Crea un pedido completo para Lienzos de Fe a partir del link de un chat de ManyChat.
@@ -601,11 +598,16 @@ curl -s --connect-timeout 10 \
 sleep 8 && curl -s --connect-timeout 10 ...
 ```
 
-**Aplica tanto para ManyChat como para Shopify.** En Shopify usar siempre el
-`--resolve` además:
+**Aplica tanto para ManyChat como para Shopify.** Para Shopify, siempre combinar
+`--connect-timeout 10` CON `--resolve` — ambas flags juntas son la solución:
 ```bash
-curl -s --connect-timeout 10 --resolve "ah29ra-xt.myshopify.com:443:23.227.38.74" ...
+curl -s --connect-timeout 10 --resolve "ah29ra-xt.myshopify.com:443:23.227.38.74" \
+  -X POST "https://ah29ra-xt.myshopify.com/admin/oauth/access_token" ...
 ```
+
+> ⚠️ Solo `--resolve` sin `--connect-timeout 10` puede seguir dando DNS overflow.
+> Solo `--connect-timeout 10` sin `--resolve` no bypasea el DNS de Shopify.
+> **Siempre usar ambas juntas.**
 
 ---
 
